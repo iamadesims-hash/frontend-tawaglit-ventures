@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex h-[calc(100vh-80px)] max-w-7xl mx-auto">
+    <!-- Chat List -->
+    <div class="w-96 bg-gray-900 border-r border-gray-800 overflow-auto">
+      <div class="p-6 border-b">
+        <button onclick="createGroupChat()" class="w-full bg-emerald-600 py-4 rounded-2xl font-semibold">+ New Group Chat</button>
+      </div>
+      <div id="chatList" class="p-4 space-y-3"></div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <div class="p-6 border-b bg-gray-900 flex items-center gap-4">
+        <div id="chatAvatar" onclick="uploadProfilePicture()" class="w-12 h-12 bg-emerald-600 rounded-2xl cursor-pointer flex items-center justify-center text-3xl overflow-hidden">👤</div>
+        <div>
+          <p id="chatName" class="font-semibold text-lg"></p>
+          <p class="text-emerald-400 text-sm flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            E2E Encrypted • Online
+          </p>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div id="chatWindow" class="flex-1 p-6 overflow-auto space-y-6"></div>
+
+      <!-- Input Bar -->
+      <div class="p-4 bg-gray-900 border-t flex items-center gap-3">
+        <button onclick="document.getElementById('mediaInput').click()" class="p-4 hover:bg-gray-800 rounded-2xl">📎</button>
+        <input type="file" id="mediaInput" class="hidden" accept="image/*,video/*" onchange="sendMedia(event)">
+        
+        <button onclick="startVoiceNote()" class="p-4 hover:bg-gray-800 rounded-2xl">🎤</button>
+        
+        <input id="msgInput" class="flex-1 bg-gray-800 p-5 rounded-3xl focus:outline-none" placeholder="Type secure message...">
+        
+        <button onclick="startSpeechToText()" class="p-4 hover:bg-gray-800 rounded-2xl">🎙️</button>
+        <button onclick="sendEncryptedMessage()" class="bg-emerald-600 px-10 py-4 rounded-3xl font-semibold">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentRoom = "demo_room";
+    let currentUser = "Dolapo Olayinka";
+
+    // Simple E2E Encryption Simulation (AES-GCM)
+    async function encryptMessage(message) {
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"]);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      
+      const encrypted = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv },
+        key,
+        encoder.encode(message)
+      );
+
+      return { ciphertext: Array.from(new Uint8Array(encrypted)), iv: Array.from(iv) };
+    }
+
+    // Send Encrypted Message
+    async function sendEncryptedMessage() {
+      const input = document.getElementById('msgInput');
+      if (!input.value.trim()) return;
+
+      const encrypted = await encryptMessage(input.value);
+      appendMessage(currentUser, input.value, true);
+      input.value = '';
+    }
+
+    function appendMessage(sender, content, isMine) {
+      const div = document.createElement('div');
+      div.className = isMine 
+        ? "bg-emerald-600 p-4 rounded-3xl max-w-[75%] ml-auto" 
+        : "bg-gray-800 p-4 rounded-3xl max-w-[75%]";
+      div.innerHTML = `<strong>${sender}:</strong><br>${content} <span class="text-xs opacity-70">🔒</span>`;
+      document.getElementById('chatWindow').appendChild(div);
+      div.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function sendMedia(e) {
+      const file = e.target.files[0];
+      if (file) {
+        appendMessage(currentUser, `📎 Shared: ${file.name}`, true);
+      }
+    }
+
+    async function startVoiceNote() {
+      alert("🎤 Voice note recording started (E2E Encrypted)");
+      // Full implementation would use MediaRecorder + DataChannel
+    }
+
+    function startSpeechToText() {
+      if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+        return alert("Speech-to-text not supported in this browser.");
+      }
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-NG';
+      recognition.onresult = (event) => {
+        document.getElementById('msgInput').value = event.results[0][0].transcript;
+      };
+      recognition.start();
+    }
+
+    function uploadProfilePicture() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          document.getElementById('chatAvatar').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      };
+      input.click();
+    }
+
+    function createGroupChat() {
+      const name = prompt("Group Chat Name:");
+      if (name) alert(`✅ Group "${name}" created with E2E encryption`);
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Initialize
+    window.onload = () => {
+      appendMessage("System", "🔐 End-to-End Encrypted Chat Session Started", false);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+tawaglit-ventures-frontend/
+├── index.html
+├── dashboard.html
+├── properties.html
+├── property-detail.html
+├── upload-property.html
+├── tour.html
+├── messages.html
+├── wallet.html
+├── community.html
+├── kyc.html
+├── assets/
+│   └── images/          # (optional - add property photos later)
+└── README.md

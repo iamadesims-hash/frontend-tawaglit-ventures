@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Details - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <a href="properties.html" class="inline-flex items-center gap-2 text-emerald-400 mb-8 hover:underline">&larr; Back to Properties</a>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <!-- Media Gallery -->
+      <div>
+        <img id="mainImage" src="https://picsum.photos/id/1015/800/600" 
+             class="w-full rounded-3xl shadow-2xl object-cover">
+        <div class="grid grid-cols-4 gap-4 mt-6">
+          <img onclick="changeImage(this)" src="https://picsum.photos/id/1015/300/200" 
+               class="rounded-2xl cursor-pointer border-2 border-emerald-400">
+          <img onclick="changeImage(this)" src="https://picsum.photos/id/237/300/200" 
+               class="rounded-2xl cursor-pointer">
+          <img onclick="changeImage(this)" src="https://picsum.photos/id/201/300/200" 
+               class="rounded-2xl cursor-pointer">
+          <img onclick="changeImage(this)" src="https://picsum.photos/id/180/300/200" 
+               class="rounded-2xl cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Property Details -->
+      <div>
+        <h1 class="text-4xl font-bold">Luxury 4-Bedroom Villa with Private Pool</h1>
+        <p class="text-5xl font-bold text-emerald-400 mt-4">₦185,000,000</p>
+        <p class="text-gray-400 mt-1">Lekki Phase 1, Lagos • 450 sqm • 4 Beds • 5 Baths</p>
+
+        <div class="mt-10 flex gap-4">
+          <button onclick="startGuidedTour()" 
+                  class="flex-1 bg-emerald-600 py-5 rounded-3xl text-lg font-semibold flex items-center justify-center gap-3">
+            <i class="fas fa-video"></i> Start Safe Guided Tour
+          </button>
+          <button onclick="boostWithStripe()" 
+                  class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-500 py-5 rounded-3xl text-lg font-semibold text-black flex items-center justify-center gap-3">
+            <i class="fas fa-crown"></i> Boost Listing
+          </button>
+        </div>
+
+        <button onclick="window.location='messages.html'" 
+                class="mt-6 w-full bg-gray-800 hover:bg-gray-700 py-5 rounded-3xl text-lg font-semibold flex items-center justify-center gap-3">
+          💬 Message Agent Directly
+        </button>
+
+        <!-- Location Map -->
+        <div class="mt-12">
+          <h3 class="text-xl font-semibold mb-4">Location</h3>
+          <div class="h-96 bg-gray-900 rounded-3xl overflow-hidden border border-gray-700">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.5!2d3.4!3d6.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNi40NTAwMDAwMDAwMDAwMDAw!5e0!3m2!1sen!2sng!4v123456" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY_HERE'); // Replace with real key
+
+    function changeImage(el) {
+      document.getElementById('mainImage').src = el.src;
+    }
+
+    function startGuidedTour() {
+      window.location.href = 'tour.html';
+    }
+
+    async function boostWithStripe() {
+      alert("🔄 Redirecting to Stripe Checkout for Featured Boost...");
+      // Real implementation would call backend
+      setTimeout(() => {
+        alert("✅ Listing Boost Activated for 7 days!");
+      }, 1000);
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+</body>
+</html>

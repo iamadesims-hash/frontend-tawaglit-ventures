@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List New Property - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-6 py-12">
+    <h1 class="text-4xl font-bold mb-2">List New Property</h1>
+    <p class="text-gray-400 mb-10">Fill in the details and upload media to publish your listing</p>
+
+    <div class="bg-gray-900 rounded-3xl p-10">
+      <div class="space-y-8">
+        <!-- Property Title -->
+        <div>
+          <label class="block text-sm mb-3 font-medium">Property Title</label>
+          <input type="text" id="title" placeholder="e.g. 4-Bedroom Luxury Villa in Lekki" 
+                 class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
+        </div>
+
+        <!-- Price & Type -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm mb-3 font-medium">Price (₦)</label>
+            <input type="text" id="price" placeholder="185000000" 
+                   class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm mb-3 font-medium">Property Type</label>
+            <select id="type" class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
+              <option value="House">House</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Land">Land</option>
+              <option value="Commercial">Commercial</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm mb-3 font-medium">Location</label>
+            <input type="text" id="location" placeholder="Lekki Phase 1, Lagos" 
+                   class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Media Upload -->
+        <div>
+          <label class="block text-sm mb-3 font-medium">Upload Photos & Videos</label>
+          <div class="border-2 border-dashed border-gray-700 rounded-3xl p-12 text-center hover:border-emerald-500 transition">
+            <input type="file" id="mediaUpload" multiple accept="image/*,video/*" class="hidden" onchange="handleMediaUpload(event)">
+            <button onclick="document.getElementById('mediaUpload').click()" 
+                    class="bg-gray-800 hover:bg-gray-700 px-10 py-4 rounded-2xl text-lg">
+              📸 Upload Images & Videos
+            </button>
+            <p class="text-xs text-gray-500 mt-4">JPG, PNG, MP4 (Max 100MB each)</p>
+          </div>
+        </div>
+
+        <!-- Preview Area -->
+        <div id="previewArea" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm mb-3 font-medium">Description</label>
+          <textarea id="description" rows="5" placeholder="Describe the property..." 
+                    class="w-full bg-gray-800 p-5 rounded-3xl focus:outline-none"></textarea>
+        </div>
+
+        <button onclick="publishProperty()" 
+                class="w-full bg-emerald-600 py-6 rounded-3xl text-xl font-semibold hover:bg-emerald-500 transition">
+          Publish Listing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    function handleMediaUpload(e) {
+      const previewArea = document.getElementById('previewArea');
+      previewArea.innerHTML = '';
+
+      Array.from(e.target.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const div = document.createElement('div');
+          div.className = "aspect-video bg-gray-800 rounded-2xl overflow-hidden relative";
+
+          if (file.type.startsWith('video/')) {
+            div.innerHTML = `<video src="${ev.target.result}" controls class="w-full h-full object-cover"></video>`;
+          } else {
+            div.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
+          }
+          previewArea.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function publishProperty() {
+      const title = document.getElementById('title').value || "Untitled Property";
+      alert(`✅ Property "${title}" published successfully!\n\nYou can now start a Safe Guided Tour.`);
+      window.location.href = 'properties.html';
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYC Verification - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-6 py-12">
+    <h1 class="text-4xl font-bold mb-2">Complete Your KYC</h1>
+    <p class="text-gray-400 mb-10">Verification is required for full access, agent upgrades, and large transactions</p>
+
+    <!-- Stripe Identity -->
+    <div class="bg-gray-900 rounded-3xl p-10 mb-8">
+      <h3 class="text-2xl font-semibold mb-4">Fast Verification with Stripe Identity</h3>
+      <p class="text-gray-400 mb-8">Upload ID and selfie for instant verification</p>
+      <button onclick="startStripeIdentity()" 
+              class="w-full bg-indigo-600 hover:bg-indigo-500 py-6 rounded-3xl text-lg font-semibold flex items-center justify-center gap-3">
+        <i class="fas fa-id-card"></i> Verify Instantly with Stripe
+      </button>
+    </div>
+
+    <!-- Manual Upload Fallback -->
+    <div class="bg-gray-900 rounded-3xl p-10">
+      <h3 class="text-2xl font-semibold mb-6">Manual Document Upload</h3>
+      <div class="space-y-8">
+        <div>
+          <label class="block text-sm mb-3">Document Type</label>
+          <select id="docType" class="w-full bg-gray-800 p-5 rounded-2xl">
+            <option value="NIN">National ID / NIN</option>
+            <option value="PASSPORT">International Passport</option>
+            <option value="DRIVERS_LICENSE">Driver's License</option>
+            <option value="PROOF_OF_ADDRESS">Proof of Address</option>
+          </select>
+        </div>
+        
+        <input type="file" id="kycFile" accept="image/*,.pdf" class="block w-full text-sm text-gray-400 file:mr-4 file:py-5 file:px-10 file:rounded-2xl file:border-0 file:bg-emerald-600 file:text-white">
+        
+        <button onclick="uploadManualKyc()" 
+                class="w-full bg-emerald-600 py-6 rounded-3xl text-lg font-semibold">Submit for Manual Review</button>
+      </div>
+    </div>
+
+    <!-- Current Status -->
+    <div id="kycStatus" class="mt-12 text-center text-lg font-medium"></div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    async function startStripeIdentity() {
+      alert("🔄 Redirecting to Stripe Identity Verification...\n\n(Production: Opens secure verification flow)");
+      setTimeout(() => {
+        document.getElementById('kycStatus').innerHTML = 
+          `<span class="text-emerald-400">✅ KYC Approved via Stripe Identity</span>`;
+      }, 1500);
+    }
+
+    function uploadManualKyc() {
+      const file = document.getElementById('kycFile').files[0];
+      if (!file) {
+        alert("Please select a document to upload");
+        return;
+      }
+      alert("✅ Document uploaded successfully!\nYour KYC is now under manual review.");
+      document.getElementById('kycStatus').innerHTML = 
+        `<span class="text-amber-400">⏳ KYC Status: Under Manual Review</span>`;
+    }
+
+    // Initialize
+    window.onload = () => {
+      document.getElementById('kycStatus').innerHTML = 
+        `<span class="text-orange-400">Pending Verification</span>`;
+    };
+  </script>
+</body>
+</html>

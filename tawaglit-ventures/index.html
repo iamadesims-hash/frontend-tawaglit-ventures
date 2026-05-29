@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tawaglit Ventures - Premium Real Estate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .hero-bg {
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), 
+                  url('https://picsum.photos/id/1015/1920/1080') center/cover no-repeat;
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-white">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="showLoginModal()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-2xl font-medium">Login</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-bg h-screen flex items-center">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="text-6xl md:text-7xl font-bold leading-tight">Own the Future<br>of Real Estate</h2>
+      <p class="text-xl mt-6 max-w-2xl mx-auto">Global platform with safe guided tours, secure payments, and premium community for buyers and agents.</p>
+      
+      <div class="mt-12 flex justify-center gap-6">
+        <button onclick="window.location='properties.html'" 
+                class="bg-white text-black px-10 py-5 rounded-3xl text-lg font-semibold hover:scale-105 transition">
+          Browse Properties
+        </button>
+        <button onclick="showLoginModal()" 
+                class="border border-white px-10 py-5 rounded-3xl text-lg font-semibold hover:bg-white/10 transition">
+          Join as Agent
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login / Sign Up Modal -->
+  <div id="authModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+    <div class="bg-gray-900 w-full max-w-md mx-4 rounded-3xl p-10">
+      <h3 id="modalTitle" class="text-3xl font-bold text-center mb-8">Login to Tawaglit</h3>
+      
+      <input id="authEmail" type="email" placeholder="Email Address" 
+             class="w-full bg-gray-800 p-5 rounded-2xl mb-4 focus:outline-none">
+      <input id="authPassword" type="password" placeholder="Password" 
+             class="w-full bg-gray-800 p-5 rounded-2xl mb-8 focus:outline-none">
+
+      <button onclick="handleAuth()" id="authButton"
+              class="w-full bg-emerald-600 py-5 rounded-2xl font-semibold text-lg">Login</button>
+
+      <p id="switchText" class="text-center mt-6 text-sm text-gray-400">
+        Don't have an account? 
+        <span onclick="toggleAuthMode()" class="text-emerald-400 cursor-pointer hover:underline">Sign up free</span>
+      </p>
+
+      <button onclick="hideAuthModal()" class="mt-8 w-full text-gray-400 hover:text-white">Close</button>
+    </div>
+  </div>
+
+  <script>
+    let isLoginMode = true;
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function showLoginModal() {
+      isLoginMode = true;
+      document.getElementById('modalTitle').textContent = "Login to Tawaglit";
+      document.getElementById('authButton').textContent = "Login";
+      document.getElementById('switchText').innerHTML = `Don't have an account? <span onclick="toggleAuthMode()" class="text-emerald-400 cursor-pointer hover:underline">Sign up free</span>`;
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function toggleAuthMode() {
+      isLoginMode = !isLoginMode;
+      if (isLoginMode) {
+        document.getElementById('modalTitle').textContent = "Login to Tawaglit";
+        document.getElementById('authButton').textContent = "Login";
+        document.getElementById('switchText').innerHTML = `Don't have an account? <span onclick="toggleAuthMode()" class="text-emerald-400 cursor-pointer hover:underline">Sign up free</span>`;
+      } else {
+        document.getElementById('modalTitle').textContent = "Create Account";
+        document.getElementById('authButton').textContent = "Sign Up";
+        document.getElementById('switchText').innerHTML = `Already have an account? <span onclick="toggleAuthMode()" class="text-emerald-400 cursor-pointer hover:underline">Login</span>`;
+      }
+    }
+
+    function handleAuth() {
+      const email = document.getElementById('authEmail').value || "user@tawaglit.com";
+      
+      localStorage.setItem('tawaglit_user', JSON.stringify({
+        name: email.split('@')[0],
+        email: email,
+        role: "USER"
+      }));
+
+      hideAuthModal();
+      alert(`✅ ${isLoginMode ? 'Login' : 'Sign Up'} successful! Welcome to Tawaglit Ventures.`);
+      window.location.href = 'dashboard.html';
+    }
+
+    function hideAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+</body>
+</html>

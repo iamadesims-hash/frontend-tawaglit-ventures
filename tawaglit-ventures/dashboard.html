@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .stat-card {
+      transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-8px);
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm hover:bg-red-600/30">Logout</button>
+        <div id="userInfo" class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-emerald-600 rounded-2xl flex items-center justify-center font-bold" id="userInitial"></div>
+          <div>
+            <p id="userName" class="font-semibold"></p>
+            <p id="userRole" class="text-xs text-gray-400"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="flex justify-between items-end mb-10">
+      <div>
+        <h1 class="text-5xl font-bold">Welcome back, <span id="greetingName" class="text-emerald-400"></span> 👋</h1>
+        <p class="text-gray-400 text-lg mt-2">Here's what's happening with your real estate portfolio</p>
+      </div>
+      <button onclick="window.location='upload-property.html'" 
+              class="bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold">
+        <i class="fas fa-plus"></i> List New Property
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div class="stat-card bg-gray-900 p-8 rounded-3xl">
+        <p class="text-gray-400">Total Portfolio Value</p>
+        <p class="text-4xl font-bold mt-4">₦428.7M</p>
+        <p class="text-emerald-400 text-sm mt-2">↑ 12.4% this month</p>
+      </div>
+      <div class="stat-card bg-gray-900 p-8 rounded-3xl">
+        <p class="text-gray-400">Saved Properties</p>
+        <p class="text-4xl font-bold mt-4">18</p>
+      </div>
+      <div class="stat-card bg-gray-900 p-8 rounded-3xl">
+        <p class="text-gray-400">Active Tours</p>
+        <p class="text-4xl font-bold mt-4 text-emerald-400">3</p>
+      </div>
+      <div class="stat-card bg-gray-900 p-8 rounded-3xl">
+        <p class="text-gray-400">Wallet Balance</p>
+        <p class="text-4xl font-bold mt-4">₦12,450,000</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Recent Activity -->
+      <div class="lg:col-span-7 bg-gray-900 rounded-3xl p-8">
+        <h2 class="text-2xl font-semibold mb-6">Recent Activity</h2>
+        <div id="activityList" class="space-y-6"></div>
+      </div>
+
+      <!-- Quick Actions & Saved -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-gray-900 rounded-3xl p-8">
+          <h3 class="font-semibold mb-6">Quick Actions</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <button onclick="window.location='tour.html'" class="bg-gray-800 hover:bg-gray-700 h-32 rounded-3xl flex flex-col items-center justify-center gap-3">
+              <i class="fas fa-video text-3xl text-emerald-400"></i>
+              <span class="font-medium">Start Tour</span>
+            </button>
+            <button onclick="window.location='wallet.html'" class="bg-gray-800 hover:bg-gray-700 h-32 rounded-3xl flex flex-col items-center justify-center gap-3">
+              <i class="fas fa-wallet text-3xl text-emerald-400"></i>
+              <span class="font-medium">Add Funds</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-3xl p-8">
+          <h3 class="font-semibold mb-6">Saved Properties</h3>
+          <div id="savedProperties" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    // Load User Data
+    function loadUser() {
+      const user = JSON.parse(localStorage.getItem('tawaglit_user'));
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+      document.getElementById('greetingName').textContent = user.name.split(' ')[0];
+      document.getElementById('userRole').textContent = user.role || "User";
+    }
+
+    // Dark/Light Mode
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Mock Data
+    function loadActivity() {
+      const activities = [
+        { time: "2 hours ago", action: "Started Safe Guided Tour", property: "Lekki Phase 1 Villa" },
+        { time: "Yesterday", action: "Boosted Listing", property: "Ikoyi Luxury Apartment" },
+        { time: "3 days ago", action: "Wallet Deposit", property: "₦2,500,000 via Paystack" }
+      ];
+
+      const container = document.getElementById('activityList');
+      activities.forEach(act => {
+        const div = document.createElement('div');
+        div.className = "flex gap-5 items-start";
+        div.innerHTML = `
+          <div class="w-10 h-10 bg-gray-800 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-check-circle text-emerald-400"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-medium">${act.action}</p>
+            <p class="text-gray-400">${act.property}</p>
+            <p class="text-xs text-gray-500 mt-1">${act.time}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function loadSavedProperties() {
+      const saved = [
+        { title: "4-Bedroom Villa", location: "Lekki Phase 1", price: "185M" },
+        { title: "3-Bedroom Apartment", location: "Ikoyi", price: "95M" }
+      ];
+
+      const container = document.getElementById('savedProperties');
+      saved.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-gray-800 p-5 rounded-2xl";
+        div.innerHTML = `
+          <div>
+            <p class="font-medium">${item.title}</p>
+            <p class="text-sm text-gray-400">${item.location}</p>
+          </div>
+          <p class="font-semibold text-emerald-400">₦${item.price}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Initialize
+    window.onload = () => {
+      loadUser();
+      loadActivity();
+      loadSavedProperties();
+
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+  </script>
+</body>
+</html>

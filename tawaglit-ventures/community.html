@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-4xl font-bold">Premium Community</h1>
+        <p class="text-emerald-400 text-lg">Exclusive network for verified agents and serious investors</p>
+      </div>
+      <button onclick="createCommunityGroup()" 
+              class="bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold">
+        <i class="fas fa-plus"></i> Create New Group
+      </button>
+    </div>
+
+    <!-- Community Grid -->
+    <div id="communityGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    const communities = [
+      {
+        name: "Lagos Luxury Investors",
+        members: 142,
+        desc: "High-value deals, off-market opportunities & networking",
+        image: "https://picsum.photos/id/1015/600/400"
+      },
+      {
+        name: "Nigeria Real Estate Agents",
+        members: 89,
+        desc: "Agent-only discussions, leads sharing & market insights",
+        image: "https://picsum.photos/id/201/600/400"
+      },
+      {
+        name: "Premium Property Flippers",
+        members: 67,
+        desc: "Short-term investments & renovation strategies",
+        image: "https://picsum.photos/id/237/600/400"
+      }
+    ];
+
+    function renderCommunities() {
+      const grid = document.getElementById('communityGrid');
+      grid.innerHTML = communities.map(c => `
+        <div class="bg-gray-900 rounded-3xl overflow-hidden hover:scale-105 transition">
+          <img src="${c.image}" class="w-full h-48 object-cover">
+          <div class="p-8">
+            <h3 class="font-semibold text-xl">${c.name}</h3>
+            <p class="text-emerald-400 text-sm mt-2">${c.members} members</p>
+            <p class="text-gray-400 mt-4">${c.desc}</p>
+            <button onclick="joinCommunity('${c.name}')" 
+                    class="mt-8 w-full bg-white text-black py-4 rounded-2xl font-semibold hover:bg-emerald-400">
+              Join Community
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function createCommunityGroup() {
+      const name = prompt("Enter Premium Community Group Name:");
+      if (name) {
+        alert(`✅ Premium Group "${name}" created successfully!\n\nOnly verified premium users can join.`);
+        communities.unshift({
+          name: name,
+          members: 1,
+          desc: "New premium group",
+          image: "https://picsum.photos/id/180/600/400"
+        });
+        renderCommunities();
+      }
+    }
+
+    function joinCommunity(name) {
+      alert(`✅ You have joined "${name}" successfully!\n\nWelcome to the premium community.`);
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Initialize
+    window.onload = () => {
+      renderCommunities();
+    };
+  </script>
+</body>
+</html>

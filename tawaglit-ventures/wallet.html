@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet - Tawaglit Ventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+  <script src="https://js.paystack.co/v2/inline.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-950 text-white pt-20">
+  <!-- Shared Navbar -->
+  <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
+      <div class="flex gap-8 text-sm font-medium">
+        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
+        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+        <a href="community.html" class="hover:text-emerald-400">Community</a>
+        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
+        <a href="wallet.html" class="text-emerald-400">Wallet</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <h1 class="text-4xl font-bold mb-2">Global Wallet</h1>
+    <p class="text-gray-400">Fiat • Crypto • Virtual Cards • Instant Transfers</p>
+
+    <!-- Currency Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mt-10">
+      <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-8 rounded-3xl">
+        <p class="text-sm">NGN Account</p>
+        <p class="text-5xl font-bold mt-6" id="ngnBalance">₦12,450,920</p>
+        <p class="text-sm mt-2">0123456789 • Access Bank</p>
+      </div>
+      <div class="bg-gray-900 p-8 rounded-3xl">
+        <p class="text-sm">USD Virtual</p>
+        <p class="text-5xl font-bold mt-6" id="usdBalance">$2,845</p>
+      </div>
+      <div class="bg-gray-900 p-8 rounded-3xl">
+        <p class="text-sm">BTC</p>
+        <p class="text-5xl font-bold mt-6" id="btcBalance">0.0842</p>
+        <p class="text-emerald-400 text-sm">~$8,420</p>
+      </div>
+      <div class="bg-gray-900 p-8 rounded-3xl">
+        <p class="text-sm">ETH</p>
+        <p class="text-5xl font-bold mt-6" id="ethBalance">2.45</p>
+      </div>
+      <div class="bg-gray-900 p-8 rounded-3xl">
+        <p class="text-sm">USDT</p>
+        <p class="text-5xl font-bold mt-6" id="usdtBalance">3,450</p>
+      </div>
+    </div>
+
+    <!-- Virtual Cards -->
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold mb-6">Virtual Cards</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 p-8 rounded-3xl text-white">
+          <p class="text-sm">Visa Debit Card</p>
+          <p class="text-3xl font-bold mt-8">•••• •••• •••• 4242</p>
+          <p class="text-sm mt-6">Expires 12/28</p>
+          <button onclick="applyForCard()" class="mt-8 bg-white text-black px-6 py-3 rounded-2xl text-sm">Apply for New Card</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <button onclick="payWithPaystack()" class="bg-purple-600 p-8 rounded-3xl hover:bg-purple-700 transition">
+        <i class="fas fa-mobile-alt text-4xl mb-4"></i>
+        <p class="font-semibold">Pay with Paystack</p>
+      </button>
+      <button onclick="payWithStripe()" class="bg-blue-600 p-8 rounded-3xl hover:bg-blue-700 transition">
+        <i class="fas fa-credit-card text-4xl mb-4"></i>
+        <p class="font-semibold">Pay with Stripe</p>
+      </button>
+      <button onclick="depositCrypto()" class="bg-amber-600 p-8 rounded-3xl hover:bg-amber-700 transition">
+        <i class="fas fa-coins text-4xl mb-4"></i>
+        <p class="font-semibold">Deposit Crypto</p>
+      </button>
+      <button onclick="window.location='messages.html'" class="bg-emerald-600 p-8 rounded-3xl hover:bg-emerald-700 transition">
+        <i class="fas fa-comment-dots text-4xl mb-4"></i>
+        <p class="font-semibold">Message Support</p>
+      </button>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="mt-16 bg-gray-900 rounded-3xl p-8">
+      <h2 class="text-2xl font-semibold mb-6">Recent Transactions</h2>
+      <div id="txHistory" class="space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button onclick="window.location='messages.html'" 
+          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
+    💬
+  </button>
+
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Paystack Integration
+    function payWithPaystack() {
+      const handler = PaystackPop.setup({
+        key: 'pk_test_YOUR_PAYSTACK_PUBLIC_KEY', // Replace with real key
+        email: 'user@tawaglit.com',
+        amount: 5000000, // ₦50,000
+        currency: "NGN",
+        ref: 'TXN_' + Math.floor(Math.random() * 1000000000),
+        callback: function(response) {
+          alert('✅ Payment successful! Reference: ' + response.reference);
+          addTransaction("Paystack Top-up", "₦50,000", "+");
+        }
+      });
+      handler.openIframe();
+    }
+
+    // Stripe Integration
+    async function payWithStripe() {
+      alert("🔄 Redirecting to Stripe Checkout...");
+      // Real implementation would call backend
+      setTimeout(() => {
+        alert("✅ Payment successful via Stripe!");
+        addTransaction("Stripe Deposit", "$250", "+");
+      }, 1200);
+    }
+
+    function depositCrypto() {
+      const coin = prompt("Enter coin (BTC, ETH, USDT):", "USDT");
+      const amount = prompt("Amount:", "100");
+      if (coin && amount) {
+        alert(`✅ Deposit request for ${amount} ${coin} created.`);
+        addTransaction(`Deposit ${amount} ${coin}`, "+");
+      }
+    }
+
+    function applyForCard() {
+      alert("✅ Virtual Debit Card application submitted!\nCard will be ready in 24 hours.");
+    }
+
+    function addTransaction(title, amount, sign) {
+      const container = document.getElementById('txHistory');
+      const div = document.createElement('div');
+      div.className = "flex justify-between items-center bg-gray-800 p-6 rounded-2xl";
+      div.innerHTML = `
+        <div>
+          <p class="font-medium">${title}</p>
+          <p class="text-xs text-gray-400">Just now</p>
+        </div>
+        <p class="font-semibold ${sign === '+' ? 'text-emerald-400' : 'text-red-400'}">${sign} ${amount}</p>
+      `;
+      container.prepend(div);
+    }
+
+    // Initialize demo data
+    window.onload = () => {
+      addTransaction("Paystack Top-up", "₦2,500,000", "+");
+      addTransaction("Received 0.005 BTC", "0.005 BTC", "+");
+    };
+  </script>
+</body>
+</html>

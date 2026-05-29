@@ -1,0 +1,23 @@
+frontend/
+├── assets/
+│   ├── images/
+│   │   ├── properties/          # Property photos
+│   │   │   ├── villa-1.jpg
+│   │   │   ├── apartment-1.jpg
+│   │   │   └── land-1.jpg
+│   │   │
+│   │   ├── avatars/             # User & Agent profile pictures
+│   │   │   ├── default-avatar.png
+│   │   │   ├── agent-1.jpg
+│   │   │   └── user-1.jpg
+│   │   │
+│   │   ├── logos/               # Branding
+│   │   │   └── tawaglit-logo.png
+│   │   │
+│   │   └── banners/             # Hero & promotional images
+│   │       └── hero-bg.jpg
+│   │
+│   └── icons/                   # Custom icons (optional)
+│       └── (svg files)
+│
+└── (all other .html files)
