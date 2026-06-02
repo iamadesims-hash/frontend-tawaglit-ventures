@@ -6,82 +6,80 @@
   <title>Safe Guided Tour - Tawaglit Ventures</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-  <style>
-    .video-feed { background: #111827; }
-    .live-dot { animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  </style>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body class="bg-gray-950 text-white pt-20">
   <!-- Shared Navbar -->
   <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
-      <div class="flex gap-8 text-sm font-medium">
-        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
-        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
+      <div class="hidden md:flex gap-8 text-sm font-medium">
+        <a href="properties.html">Properties</a>
+        <a href="messages.html">Messages</a>
         <a href="tour.html" class="text-emerald-400">Safe Tours</a>
-        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+        <a href="wallet.html">Wallet</a>
       </div>
-      <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
+        <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
+      </div>
     </div>
   </nav>
 
-  <div class="flex h-[calc(100vh-80px)]">
+  <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
     <!-- Main Video Area -->
     <div class="flex-1 relative video-feed">
       <video id="remoteVideo" autoplay playsinline class="w-full h-full object-cover"></video>
       
-      <!-- Local Camera Preview -->
       <video id="localVideo" autoplay playsinline muted 
-             class="absolute bottom-8 right-8 w-72 h-52 rounded-3xl border-4 border-emerald-400 shadow-2xl object-cover"></video>
+             class="absolute bottom-6 right-6 w-48 md:w-64 h-32 md:h-44 rounded-3xl border-4 border-emerald-400 shadow-2xl"></video>
 
-      <!-- Tour Status -->
-      <div class="absolute top-8 left-8 bg-black/70 px-6 py-3 rounded-2xl flex items-center gap-4">
+      <div class="absolute top-6 left-6 bg-black/70 px-6 py-3 rounded-2xl flex items-center gap-4">
         <span class="text-red-500 text-2xl live-dot">●</span>
-        <span id="tourStatus" class="font-semibold">LIVE GUIDED TOUR</span>
-        <span id="timer" class="text-sm bg-gray-800 px-4 py-1 rounded-full">00:00</span>
+        <span id="tourStatus" class="font-semibold">Tour Started</span>
+        <span id="liveTimer" class="text-sm">00:00</span>
       </div>
 
-      <!-- Controls -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-6 bg-black/70 px-8 py-4 rounded-3xl">
-        <button onclick="toggleAudio()" class="p-5 hover:bg-gray-700 rounded-full text-3xl" id="audioBtn">🎤</button>
-        <button onclick="toggleVideo()" class="p-5 hover:bg-gray-700 rounded-full text-3xl" id="videoBtn">📹</button>
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-6 bg-black/70 px-8 py-4 rounded-3xl">
+        <button onclick="toggleAudio()" class="p-5 hover:bg-gray-700 rounded-full text-3xl">🎤</button>
+        <button onclick="toggleVideo()" class="p-5 hover:bg-gray-700 rounded-full text-3xl">📹</button>
         <button onclick="sendSOS()" class="bg-red-600 hover:bg-red-700 p-5 rounded-full text-3xl">🚨</button>
-        <button onclick="endTour()" class="bg-red-600 hover:bg-red-700 p-5 rounded-full text-3xl">✕</button>
+        <button onclick="endTour()" class="bg-gray-800 hover:bg-gray-700 p-5 rounded-full text-3xl">End Tour</button>
       </div>
     </div>
 
-    <!-- Side Panel: Chat + Status -->
-    <div class="w-96 bg-gray-900 border-l border-gray-800 flex flex-col">
-      <div class="p-6 border-b border-gray-800">
-        <h3 class="font-semibold">Tour Progress</h3>
-        <div class="mt-6 space-y-6 text-sm">
-          <div class="flex gap-4 items-center">
+    <!-- Side Panel -->
+    <div class="w-full lg:w-96 bg-gray-900 border-l border-gray-800 flex flex-col">
+      <div class="p-6 border-b">
+        <h3 class="font-semibold mb-4">Tour Progress</h3>
+        <div class="space-y-4">
+          <div onclick="updateStatus(0)" class="flex gap-4 cursor-pointer">
             <div class="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-xs">1</div>
-            <div>Tour Started</div>
+            <div class="flex-1">Tour Started</div>
           </div>
-          <div class="flex gap-4 items-center">
+          <div onclick="updateStatus(1)" class="flex gap-4 cursor-pointer">
             <div class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-xs">2</div>
-            <div>Agent On Route</div>
+            <div class="flex-1">Agent On Route</div>
           </div>
-          <div class="flex gap-4 items-center">
+          <div onclick="updateStatus(2)" class="flex gap-4 cursor-pointer">
             <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">3</div>
-            <div>Arrived at Property</div>
+            <div class="flex-1">Arrived at Property</div>
+          </div>
+          <div onclick="updateStatus(3)" class="flex gap-4 cursor-pointer">
+            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-xs">4</div>
+            <div class="flex-1">Tour Completed</div>
           </div>
         </div>
       </div>
 
-      <!-- Live Chat -->
       <div class="flex-1 flex flex-col">
         <div class="p-6 border-b border-gray-800 font-medium">Live Chat with Agent</div>
-        <div id="chatWindow" class="flex-1 p-6 overflow-auto space-y-4"></div>
+        <div id="tourChat" class="flex-1 p-6 overflow-auto space-y-4"></div>
         
         <div class="p-6 border-t border-gray-800">
           <div class="flex gap-3">
-            <input id="chatInput" type="text" placeholder="Type message..." 
-                   class="flex-1 bg-gray-800 p-4 rounded-2xl focus:outline-none">
-            <button onclick="sendChatMessage()" class="bg-emerald-600 px-8 rounded-2xl">Send</button>
+            <input id="tourMsg" type="text" placeholder="Type message..." class="flex-1 bg-gray-800 p-4 rounded-2xl">
+            <button onclick="sendTourMessage()" class="bg-emerald-600 px-8 rounded-2xl">Send</button>
           </div>
         </div>
       </div>
@@ -89,90 +87,53 @@
   </div>
 
   <script>
-    let localStream = null;
-    let peerConnection = null;
-    let timerInterval = null;
+    const socket = io('https://backend-tawaglit-ventures-production.up.railway.app');  // ← Your Railway URL
+
     let seconds = 0;
-
-    const iceConfig = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
-    };
-
-    async function startWebRTC() {
-      try {
-        localStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: "environment" }, 
-          audio: true 
-        });
-        document.getElementById('localVideo').srcObject = localStream;
-
-        peerConnection = new RTCPeerConnection(iceConfig);
-
-        localStream.getTracks().forEach(track => {
-          peerConnection.addTrack(track, localStream);
-        });
-
-        peerConnection.ontrack = (event) => {
-          document.getElementById('remoteVideo').srcObject = event.streams[0];
-        };
-
-      } catch (err) {
-        alert("Camera or microphone access denied.\n\nError: " + err.message);
-      }
-    }
+    let timerInterval;
+    let localStream = null;
 
     function startTimer() {
       timerInterval = setInterval(() => {
         seconds++;
         const min = Math.floor(seconds / 60).toString().padStart(2, '0');
         const sec = (seconds % 60).toString().padStart(2, '0');
-        document.getElementById('timer').textContent = `${min}:${sec}`;
+        document.getElementById('liveTimer').textContent = `${min}:${sec}`;
       }, 1000);
     }
 
-    function toggleAudio() {
-      const audioTrack = localStream?.getAudioTracks()[0];
-      if (audioTrack) audioTrack.enabled = !audioTrack.enabled;
+    async function startWebRTC() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('localVideo').srcObject = localStream;
+      } catch (err) {
+        console.error("Camera access error:", err);
+      }
     }
 
-    function toggleVideo() {
-      const videoTrack = localStream?.getVideoTracks()[0];
-      if (videoTrack) videoTrack.enabled = !videoTrack.enabled;
-    }
-
-    function sendChatMessage() {
-      const input = document.getElementById('chatInput');
+    function sendTourMessage() {
+      const input = document.getElementById('tourMsg');
       if (!input.value.trim()) return;
 
-      const div = document.createElement('div');
-      div.className = "bg-emerald-600 p-4 rounded-3xl max-w-[80%] ml-auto";
-      div.textContent = input.value;
-      document.getElementById('chatWindow').appendChild(div);
+      const msg = document.createElement('div');
+      msg.className = "bg-emerald-600 p-4 rounded-2xl ml-auto max-w-[80%]";
+      msg.textContent = input.value;
+      document.getElementById('tourChat').appendChild(msg);
       input.value = '';
 
-      // Simulate agent reply
-      setTimeout(() => {
-        const reply = document.createElement('div');
-        reply.className = "bg-gray-800 p-4 rounded-3xl max-w-[80%]";
-        reply.textContent = "This room has excellent natural lighting!";
-        document.getElementById('chatWindow').appendChild(reply);
-      }, 1200);
+      socket.emit('send_message', { roomId: "tour_room", message: input.value, sender: "You" });
     }
 
     function sendSOS() {
       if (confirm("🚨 Send Emergency SOS?")) {
-        alert("🛡️ SOS Alert Sent! Location shared with support team.");
+        alert("🛡️ SOS Alert Sent! Location shared with support.");
       }
     }
 
     function endTour() {
       if (confirm("End this guided tour?")) {
-        if (peerConnection) peerConnection.close();
-        if (localStream) localStream.getTracks().forEach(track => track.stop());
         clearInterval(timerInterval);
+        if (localStream) localStream.getTracks().forEach(track => track.stop());
         alert("✅ Tour completed. Recording saved.");
         window.location.href = 'property-detail.html';
       }
@@ -183,18 +144,19 @@
       localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
     }
 
-    // Initialize
+    function logout() {
+      if (confirm("Logout from Tawaglit Ventures?")) {
+        localStorage.removeItem('tawaglit_user');
+        window.location.href = 'index.html';
+      }
+    }
+
     window.onload = () => {
-      startWebRTC();
       startTimer();
-      
-      // Demo chat message
-      setTimeout(() => {
-        const welcome = document.createElement('div');
-        welcome.className = "bg-gray-800 p-4 rounded-3xl";
-        welcome.textContent = "Hello! I'm at the gate now. Ready to begin the tour?";
-        document.getElementById('chatWindow').appendChild(welcome);
-      }, 1500);
+      startWebRTC();
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+      }
     };
   </script>
 </body>
