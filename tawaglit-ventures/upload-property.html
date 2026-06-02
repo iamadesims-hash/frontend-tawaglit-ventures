@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>List New Property - Tawaglit Ventures</title>
+  <title>List Property - Tawaglit Ventures</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -12,15 +12,12 @@
   <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
-      
-      <div class="flex gap-8 text-sm font-medium">
-        <a href="properties.html" class="hover:text-emerald-400">Properties</a>
-        <a href="messages.html" class="hover:text-emerald-400">Messages</a>
-        <a href="community.html" class="hover:text-emerald-400">Community</a>
-        <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
-        <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
+      <div class="hidden md:flex gap-8 text-sm font-medium">
+        <a href="properties.html">Properties</a>
+        <a href="messages.html">Messages</a>
+        <a href="tour.html">Safe Tours</a>
+        <a href="wallet.html">Wallet</a>
       </div>
-
       <div class="flex items-center gap-4">
         <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
         <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
@@ -28,104 +25,115 @@
     </div>
   </nav>
 
-  <div class="max-w-4xl mx-auto px-6 py-12">
-    <h1 class="text-4xl font-bold mb-2">List New Property</h1>
-    <p class="text-gray-400 mb-10">Fill in the details and upload media to publish your listing</p>
+  <div class="max-w-4xl mx-auto px-6 py-10">
+    <h1 class="text-4xl font-bold mb-2">List Your Property</h1>
+    <p class="text-gray-400">Reach thousands of buyers and renters worldwide</p>
 
-    <div class="bg-gray-900 rounded-3xl p-10">
-      <div class="space-y-8">
-        <!-- Property Title -->
+    <div class="mt-10 bg-gray-900 rounded-3xl p-8">
+      <!-- Property Title -->
+      <input type="text" id="title" placeholder="Property Title (e.g. 4-Bedroom Villa in Lekki)" 
+             class="w-full bg-gray-800 p-5 rounded-2xl text-lg mb-8 focus:outline-none">
+
+      <!-- Price & Type -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div>
-          <label class="block text-sm mb-3 font-medium">Property Title</label>
-          <input type="text" id="title" placeholder="e.g. 4-Bedroom Luxury Villa in Lekki" 
-                 class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
+          <label class="block text-sm mb-3">Price</label>
+          <input type="number" id="price" placeholder="185000000" 
+                 class="w-full bg-gray-800 p-5 rounded-2xl">
         </div>
-
-        <!-- Price & Type -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label class="block text-sm mb-3 font-medium">Price (₦)</label>
-            <input type="text" id="price" placeholder="185000000" 
-                   class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-sm mb-3 font-medium">Property Type</label>
-            <select id="type" class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
-              <option value="House">House</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Land">Land</option>
-              <option value="Commercial">Commercial</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm mb-3 font-medium">Location</label>
-            <input type="text" id="location" placeholder="Lekki Phase 1, Lagos" 
-                   class="w-full bg-gray-800 p-5 rounded-2xl focus:outline-none">
-          </div>
-        </div>
-
-        <!-- Media Upload -->
         <div>
-          <label class="block text-sm mb-3 font-medium">Upload Photos & Videos</label>
-          <div class="border-2 border-dashed border-gray-700 rounded-3xl p-12 text-center hover:border-emerald-500 transition">
-            <input type="file" id="mediaUpload" multiple accept="image/*,video/*" class="hidden" onchange="handleMediaUpload(event)">
-            <button onclick="document.getElementById('mediaUpload').click()" 
-                    class="bg-gray-800 hover:bg-gray-700 px-10 py-4 rounded-2xl text-lg">
-              📸 Upload Images & Videos
-            </button>
-            <p class="text-xs text-gray-500 mt-4">JPG, PNG, MP4 (Max 100MB each)</p>
+          <label class="block text-sm mb-3">Listing Type</label>
+          <div class="flex gap-4">
+            <button onclick="setListingType(this)" class="flex-1 py-5 rounded-2xl border border-gray-700 hover:border-emerald-500 active-listing">For Sale</button>
+            <button onclick="setListingType(this)" class="flex-1 py-5 rounded-2xl border border-gray-700 hover:border-emerald-500">For Rent</button>
           </div>
         </div>
-
-        <!-- Preview Area -->
-        <div id="previewArea" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-
-        <!-- Description -->
-        <div>
-          <label class="block text-sm mb-3 font-medium">Description</label>
-          <textarea id="description" rows="5" placeholder="Describe the property..." 
-                    class="w-full bg-gray-800 p-5 rounded-3xl focus:outline-none"></textarea>
-        </div>
-
-        <button onclick="publishProperty()" 
-                class="w-full bg-emerald-600 py-6 rounded-3xl text-xl font-semibold hover:bg-emerald-500 transition">
-          Publish Listing
-        </button>
       </div>
+
+      <!-- Drag & Drop Media Upload -->
+      <div class="mb-8">
+        <label class="block text-sm mb-3">Upload Photos, Videos & 360° Tours</label>
+        <div id="dropZone" 
+             class="border-2 border-dashed border-gray-600 rounded-3xl p-12 text-center hover:border-emerald-500 transition cursor-pointer"
+             ondrop="handleDrop(event)" ondragover="handleDragOver(event)" onclick="document.getElementById('mediaInput').click()">
+          <i class="fas fa-cloud-upload-alt text-5xl text-gray-500 mb-4"></i>
+          <p class="text-lg">Drag & drop images, videos, or 360° files here</p>
+          <p class="text-sm text-gray-500 mt-2">or click to browse (JPG, PNG, MP4, 360° supported)</p>
+        </div>
+        <input type="file" id="mediaInput" multiple accept="image/*,video/*" class="hidden" onchange="handleFiles(event)">
+      </div>
+
+      <!-- Preview Area -->
+      <div id="previewArea" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
+
+      <!-- Location -->
+      <div class="mb-8">
+        <label class="block text-sm mb-3">Location</label>
+        <input type="text" id="location" placeholder="Lekki Phase 1, Lagos" class="w-full bg-gray-800 p-5 rounded-2xl mb-4">
+        <div class="h-64 bg-gray-800 rounded-3xl overflow-hidden">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.5!2d3.4!3d6.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNi40NTAwMDAwMDAwMDAwMDAw!5e0!3m2!1sen!2sng!4v123456" 
+                  width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button onclick="publishProperty()" 
+              class="w-full bg-emerald-600 hover:bg-emerald-500 py-6 rounded-3xl text-xl font-semibold">
+        Publish Listing
+      </button>
     </div>
   </div>
 
-  <!-- Floating Message Button -->
-  <button onclick="window.location='messages.html'" 
-          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
-    💬
-  </button>
-
   <script>
-    function handleMediaUpload(e) {
-      const previewArea = document.getElementById('previewArea');
-      previewArea.innerHTML = '';
+    let uploadedFiles = [];
 
-      Array.from(e.target.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-          const div = document.createElement('div');
-          div.className = "aspect-video bg-gray-800 rounded-2xl overflow-hidden relative";
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('border-emerald-500');
+    }
 
-          if (file.type.startsWith('video/')) {
-            div.innerHTML = `<video src="${ev.target.result}" controls class="w-full h-full object-cover"></video>`;
-          } else {
-            div.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
-          }
-          previewArea.appendChild(div);
-        };
-        reader.readAsDataURL(file);
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-emerald-500');
+      handleFiles(e);
+    }
+
+    function handleFiles(e) {
+      const files = e.target.files || e.dataTransfer.files;
+      const preview = document.getElementById('previewArea');
+      
+      Array.from(files).forEach(file => {
+        uploadedFiles.push(file);
+        const div = document.createElement('div');
+        div.className = "aspect-video bg-gray-800 rounded-2xl overflow-hidden relative";
+        
+        if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.className = "w-full h-full object-cover";
+          video.muted = true;
+          div.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.className = "w-full h-full object-cover";
+          div.appendChild(img);
+        }
+        preview.appendChild(div);
       });
     }
 
+    function setListingType(btn) {
+      document.querySelectorAll('#dropZone ~ div button').forEach(b => b.classList.remove('active-listing'));
+      btn.classList.add('active-listing');
+    }
+
     function publishProperty() {
-      const title = document.getElementById('title').value || "Untitled Property";
-      alert(`✅ Property "${title}" published successfully!\n\nYou can now start a Safe Guided Tour.`);
+      if (uploadedFiles.length === 0) {
+        alert("Please upload at least one photo or video");
+        return;
+      }
+      alert("✅ Property listing published successfully!\nIt is now live on the marketplace.");
       window.location.href = 'properties.html';
     }
 
@@ -140,6 +148,12 @@
         window.location.href = 'index.html';
       }
     }
+
+    window.onload = () => {
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+      }
+    };
   </script>
 </body>
 </html>

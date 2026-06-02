@@ -12,15 +12,13 @@
   <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <h1 onclick="window.location='index.html'" class="text-2xl font-bold text-emerald-400 cursor-pointer">Tawaglit<span class="text-white">Ventures</span></h1>
-      
-      <div class="flex gap-8 text-sm font-medium">
+      <div class="hidden md:flex gap-8 text-sm font-medium">
         <a href="properties.html" class="text-emerald-400">Properties</a>
         <a href="messages.html" class="hover:text-emerald-400">Messages</a>
         <a href="community.html" class="hover:text-emerald-400">Community</a>
         <a href="tour.html" class="hover:text-emerald-400">Safe Tours</a>
         <a href="wallet.html" class="hover:text-emerald-400">Wallet</a>
       </div>
-
       <div class="flex items-center gap-4">
         <button onclick="toggleTheme()" id="themeBtn" class="p-3 hover:bg-gray-800 rounded-2xl"><i class="fas fa-moon"></i></button>
         <button onclick="logout()" class="bg-red-600/20 text-red-400 px-6 py-2.5 rounded-2xl text-sm">Logout</button>
@@ -29,77 +27,94 @@
   </nav>
 
   <div class="max-w-7xl mx-auto px-6 py-10">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-4xl font-bold">Live Property Marketplace</h1>
-      <div class="flex items-center gap-3 text-emerald-400 text-sm">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-        <span id="liveStatus">LIVE UPDATES ENABLED</span>
-      </div>
-    </div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-8">Discover Properties Worldwide</h1>
 
     <!-- Filters -->
-    <div class="bg-gray-900 p-6 rounded-3xl flex flex-wrap gap-4 mb-10">
-      <input id="searchInput" type="text" placeholder="Search location, title or price..." 
+    <div class="bg-gray-900 p-6 rounded-3xl mb-10 flex flex-col md:flex-row gap-4">
+      <input id="searchInput" type="text" placeholder="Search location, title..." 
              class="flex-1 bg-gray-800 p-5 rounded-2xl focus:outline-none">
+      
       <select id="typeFilter" class="bg-gray-800 p-5 rounded-2xl">
-        <option value="">All Types</option>
+        <option value="">All Categories</option>
         <option value="House">Houses</option>
         <option value="Apartment">Apartments</option>
         <option value="Land">Land</option>
+        <option value="Commercial">Commercial</option>
       </select>
-      <button onclick="filterProperties()" class="bg-emerald-600 px-10 py-5 rounded-2xl font-semibold">Search</button>
+
+      <button onclick="filterProperties()" 
+              class="bg-emerald-600 px-10 py-5 rounded-2xl font-semibold">Search</button>
+    </div>
+
+    <!-- Interactive Map -->
+    <div class="h-80 md:h-96 bg-gray-900 rounded-3xl mb-10 overflow-hidden border border-gray-700">
+      <iframe id="mapEmbed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.5!2d3.4!3d6.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNi40NTAwMDAwMDAwMDAwMDAw!5e0!3m2!1sen!2sng!4v123456" 
+              width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
     </div>
 
     <!-- Properties Grid -->
-    <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <div id="propertiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
   </div>
 
-  <!-- Floating Message Button -->
-  <button onclick="window.location='messages.html'" 
-          class="fixed bottom-8 right-8 bg-emerald-600 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition z-50">
-    💬
-  </button>
-
   <script>
-    let properties = [
+    const properties = [
       {
         id: 1,
         title: "4-Bedroom Luxury Villa",
         price: "185000000",
         location: "Lekki Phase 1, Lagos",
         type: "House",
-        img: "https://picsum.photos/id/1015/600/400"
+        img: "https://picsum.photos/id/1015/600/400",
+        saved: false
       },
       {
         id: 2,
-        title: "3-Bedroom Smart Apartment",
+        title: "3-Bedroom Modern Apartment",
         price: "95000000",
         location: "Ikoyi, Lagos",
         type: "Apartment",
-        img: "https://picsum.photos/id/201/600/400"
+        img: "https://picsum.photos/id/201/600/400",
+        saved: true
       },
       {
         id: 3,
-        title: "Prime 800sqm Land",
+        title: "500sqm Prime Land",
         price: "450000000",
         location: "Banana Island, Lagos",
         type: "Land",
-        img: "https://picsum.photos/id/237/600/400"
+        img: "https://picsum.photos/id/237/600/400",
+        saved: false
+      },
+      {
+        id: 4,
+        title: "Commercial Office Space",
+        price: "320000000",
+        location: "Victoria Island, Lagos",
+        type: "Commercial",
+        img: "https://picsum.photos/id/180/600/400",
+        saved: false
       }
     ];
 
     function renderProperties(data) {
       const grid = document.getElementById('propertiesGrid');
       grid.innerHTML = data.map(p => `
-        <div onclick="viewProperty(${p.id})" class="bg-gray-900 rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition">
-          <img src="${p.img}" class="w-full h-56 object-cover">
+        <div class="bg-gray-900 rounded-3xl overflow-hidden hover:scale-105 transition-all group">
+          <div class="relative">
+            <img src="${p.img}" class="w-full h-56 object-cover">
+            <button onclick="toggleSave(${p.id}); event.stopImmediatePropagation()" 
+                    class="absolute top-4 right-4 bg-black/60 hover:bg-black p-3 rounded-full text-xl transition">
+              ${p.saved ? '❤️' : '♡'}
+            </button>
+          </div>
           <div class="p-6">
-            <div class="flex justify-between items-start">
-              <p class="text-emerald-400 font-bold text-xl">₦${Number(p.price).toLocaleString()}</p>
-              <span class="text-xs bg-emerald-500/20 text-emerald-400 px-4 py-1 rounded-full">${p.type}</span>
-            </div>
-            <h3 class="font-semibold mt-3 text-lg">${p.title}</h3>
+            <p class="text-emerald-400 font-bold text-xl">₦${Number(p.price).toLocaleString()}</p>
+            <h3 class="font-semibold text-lg mt-2">${p.title}</h3>
             <p class="text-gray-400">${p.location}</p>
+            <button onclick="viewProperty(${p.id})" 
+                    class="mt-6 w-full bg-white text-black py-4 rounded-2xl font-semibold group-hover:bg-emerald-600 group-hover:text-white transition">
+              View Details & Tour
+            </button>
           </div>
         </div>
       `).join('');
@@ -113,7 +128,6 @@
         (p.title.toLowerCase().includes(search) || p.location.toLowerCase().includes(search)) &&
         (!type || p.type === type)
       );
-      
       renderProperties(filtered);
     }
 
@@ -121,33 +135,21 @@
       window.location.href = `property-detail.html?id=${id}`;
     }
 
-    // Real-time Updates Simulation
-    function simulateLiveUpdates() {
-      setInterval(() => {
-        if (Math.random() > 0.6) {
-          const randomIndex = Math.floor(Math.random() * properties.length);
-          properties[randomIndex].price = (parseInt(properties[randomIndex].price) * 1.015).toFixed(0);
-          
-          renderProperties(properties);
-          
-          // Show toast notification
-          const toast = document.createElement('div');
-          toast.className = "fixed bottom-8 right-8 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl z-50";
-          toast.textContent = `Price updated for ${properties[randomIndex].title}`;
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 4000);
-        }
-      }, 7000);
+    function toggleSave(id) {
+      const prop = properties.find(p => p.id === id);
+      if (prop) {
+        prop.saved = !prop.saved;
+        renderProperties(properties);
+      }
     }
 
-    // Theme & Logout
     function toggleTheme() {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
     }
 
     function logout() {
-      if (confirm("Logout from Tawaglit Ventures?")) {
+      if (confirm("Logout from Tawaglit?")) {
         localStorage.removeItem('tawaglit_user');
         window.location.href = 'index.html';
       }
@@ -156,8 +158,7 @@
     // Initialize
     window.onload = () => {
       renderProperties(properties);
-      simulateLiveUpdates();
-
+      
       if (localStorage.getItem('theme') === 'light') {
         document.documentElement.classList.remove('dark');
       }

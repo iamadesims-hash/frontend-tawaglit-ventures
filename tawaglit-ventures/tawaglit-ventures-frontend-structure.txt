@@ -1,14 +1,15 @@
-tawaglit-ventures-frontend/
-├── index.html
-├── dashboard.html
-├── properties.html
-├── property-detail.html
-├── upload-property.html
-├── tour.html
-├── messages.html
-├── wallet.html
-├── community.html
-├── kyc.html
+frontend/
+├── index.html                  # Landing + Auth
+├── dashboard.html              # User Dashboard
+├── properties.html             # Property Listings
+├── property-detail.html        # Property Details
+├── upload-property.html        # Property Upload
+├── tour.html                   # Safe Guided Tour (WebRTC)
+├── messages.html               # Chat System
+├── wallet.html                 # Wallet & Payments
+├── community.html              # Premium Community
+├── kyc.html                    # KYC Verification
+├── agent.html                  # Agent Dashboard (New)
 ├── assets/
-│   └── images/          # (optional - add property photos later)
+│   └── images/                 # Property photos, logos
 └── README.md
